@@ -13,7 +13,7 @@ public enum EventName
     /// <summary>
     /// Represents the event when the boiler's interlock is in open state.
     /// </summary>
-    InterLockClosed = 2,
+    InterLockClosed,
 
     /// <summary>
     /// Represents the event when the boiler's interlock is in closed state.

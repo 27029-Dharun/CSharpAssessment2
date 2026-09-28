@@ -49,10 +49,7 @@ public class BoilerService
             return;
         }
 
-        if (_boilerMachine.Status == BoilerStatus.Ready && _boilerMachine.InterLock == InterLock.Closed)
-        {
-            _ = StartBoilerAsync(cancellationTokenSource.Token);
-        }
+        _ = StartBoilerAsync(cancellationTokenSource.Token);
     }
 
     /// <summary>
@@ -90,7 +87,7 @@ public class BoilerService
 
             cancellationTokenSource.Cancel();
             this._notificationService.DisplayNotification("Boiler stopped since the interlock is opened.");
-            this._eventService.LogMessage(DateTime.Now, EventName.LockOut, "Boiler stopped since the interlock is opened and entered the lock out state.");
+            this._eventService.LogMessage(DateTime.Now, EventName.LockOut, "Boiler stopped since the interlock is opened.");
             _boilerMachine.SetStatus(BoilerStatus.LockOut);
         }
         else
@@ -106,7 +103,7 @@ public class BoilerService
     /// </summary>
     public void ResetLockOut()
     {
-        if (_boilerMachine.InterLock == InterLock.Closed)
+        if (_boilerMachine.InterLock == InterLock.Closed && !BoilerValidation.IsMachineRunning(_boilerMachine))
         {
             _boilerMachine.SetStatus(BoilerStatus.Ready);
             this._notificationService.DisplayNotification("Reset machine status to ready");

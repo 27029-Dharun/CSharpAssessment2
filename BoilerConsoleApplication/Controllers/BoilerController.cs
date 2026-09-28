@@ -78,6 +78,9 @@ public class BoilerController
         }
     }
 
+    /// <summary>
+    /// Displays the log representing the events in the boiler.
+    /// </summary>
     private void DisplayLog()
     {
         List<LogEntry> logEntries = this._logService.GetLog();
