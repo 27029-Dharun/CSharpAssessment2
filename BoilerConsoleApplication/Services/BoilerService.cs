@@ -116,7 +116,10 @@ public class BoilerService
             _boilerMachine.SetStatus(BoilerStatus.Ready);
             this._notificationService.DisplayNotification("Reset machine status to ready");
             this._eventService.LogMessage(DateTime.Now, EventName.Ready, "Reset machine status to ready.");
+            return;
         }
+
+        this._notificationService.DisplayNotification("Toggle interlock switch to reset lockout.");
     }
 
     /// <summary>
