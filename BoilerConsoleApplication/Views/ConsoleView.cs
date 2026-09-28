@@ -21,7 +21,9 @@ public class ConsoleView
     /// <returns>The menu option entered by the user.</returns>
     public MenuOption GetMainMenuOption()
     {
-        string menuMessage = "  Boiler Controller - Menu Option \n" +
+        string menuMessage = "----------------------------------\n" +
+            "  Boiler Controller - Menu Option \n" +
+            "----------------------------------\n" +
             "1. Start boiler operation\n" +
             "2. Stop boiler operation\n" +
             "3. Simulate error\n" +
@@ -40,7 +42,7 @@ public class ConsoleView
         Console.WriteLine("=====================================================================================");
         foreach (var entries in logEntries)
         {
-            Console.WriteLine($"| {entries.TimeStamp} | {entries.Name, -15} | {entries.Data, -40} |");
+            Console.WriteLine($"| {entries.TimeStamp} | {entries.Name, -15} | {entries.Data, -41} |");
         }
         Console.WriteLine("=====================================================================================");
     }
@@ -76,7 +78,7 @@ public class ConsoleView
     {
         (int currentLeft, int currentTop) = Console.GetCursorPosition();
 
-        int left = Console.WindowWidth / 5;
+        int left = 10;
         int top = Console.WindowHeight / 2;
 
         Console.SetCursorPosition(left, top);

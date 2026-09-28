@@ -1,4 +1,5 @@
-﻿using BoilerConsoleApplication.Models;
+﻿using BoilerConsoleApplication.CustomException;
+using BoilerConsoleApplication.Models;
 
 namespace BoilerConsoleApplication.Repository;
 
@@ -17,11 +18,10 @@ public class LogRepository
     public LogRepository(string path)
     {
         _path = path;
-        if (!File.Exists(path))
+        if (!File.Exists(_path))
         {
-            File.WriteAllText(path, "");
+            File.WriteAllText(_path, "");
         }
-
     }
 
     /// <summary>
@@ -46,23 +46,30 @@ public class LogRepository
         List<LogEntry> logInFile = new List<LogEntry>();
         string logs;
 
-        lock (_lock)
+        try
         {
-            logs = File.ReadAllText(_path);
-        }
-
-        string[] logsList = logs.Split("\n");
-
-        foreach (var log in logsList)
-        {
-            string[] logEntries = log.Split(",");
-            if (logEntries.Length == 3)
+            lock (_lock)
             {
-                _ = DateTime.TryParse(logEntries[0], out DateTime dateTime);
-                _ = Enum.TryParse(logEntries[1], out EventName eventName);
-                LogEntry entry = new LogEntry(dateTime, eventName, logEntries[2]);
-                logInFile.Add(entry);
+                logs = File.ReadAllText(_path);
             }
+
+            string[] logsList = logs.Split("\n");
+
+            foreach (var log in logsList)
+            {
+                string[] logEntries = log.Split(",");
+                if (logEntries.Length == 3)
+                {
+                    _ = DateTime.TryParse(logEntries[0], out DateTime dateTime);
+                    _ = Enum.TryParse(logEntries[1], out EventName eventName);
+                    LogEntry entry = new LogEntry(dateTime, eventName, logEntries[2]);
+                    logInFile.Add(entry);
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            throw new DataBaseException("File is corrupted - Please try again", e);
         }
 
         return logInFile;
