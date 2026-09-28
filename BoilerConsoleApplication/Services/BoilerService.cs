@@ -57,44 +57,6 @@ public class BoilerService
     }
 
     /// <summary>
-    /// Starts the boiler async
-    /// </summary>
-    /// <param name="token">The cancellation token to cancel the operation.</param>
-    /// <returns>A task that represents the boiler in running state.</returns>
-    private async Task StartBoilerAsync(CancellationToken token)
-    {
-        try
-        {
-            _boilerMachine.SetStatus(BoilerStatus.PrePurge);
-            this._notificationService.DisplayNotification("Boiler started, entered pre-purge stage");
-            this._eventService.LogMessage(DateTime.Now, EventName.PrePurge, "Boiler entered pre-purge stage.");
-
-            await Task.Delay(10000, token);
-
-            _boilerMachine.SetStatus(BoilerStatus.Ignition);
-            this._notificationService.DisplayNotification("Boiler entered ignition stage");
-            this._eventService.LogMessage(DateTime.Now, EventName.Ignition, "Boiler entered ignition stage.");
-
-            await Task.Delay(10000, token);
-
-            _boilerMachine.SetStatus(BoilerStatus.Operational);
-            this._notificationService.DisplayNotification("Boiler entered operational state");
-            this._eventService.LogMessage(DateTime.Now, EventName.Operational, "Boiler entered operational state.");
-
-            while (true)
-            {
-                await Task.Delay(10000, token);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            _boilerMachine.SetStatus(BoilerStatus.Ready);
-            this._notificationService.DisplayNotification("Boiler turned off");
-            this._eventService.LogMessage(DateTime.Now, EventName.Ready, "Boiler turned off and set to ready.");
-        }
-    }
-
-    /// <summary>
     /// Stops the boiler.
     /// </summary>
     public void StopBoiler()
@@ -106,6 +68,8 @@ public class BoilerService
         }
 
         cancellationTokenSource.Cancel();
+        _boilerMachine.SetStatus(BoilerStatus.Ready);
+        this._eventService.LogMessage(DateTime.Now, EventName.Ready, "Boiler turned off and set to ready.");
     }
 
     /// <summary>
@@ -138,5 +102,55 @@ public class BoilerService
             this._notificationService.DisplayNotification("Reset machine status to ready");
             this._eventService.LogMessage(DateTime.Now,EventName.Ready,"Reset machine status to ready.");
         }
+    }
+
+    /// <summary>
+    /// Starts the boiler async
+    /// </summary>
+    /// <param name="token">The cancellation token to cancel the operation.</param>
+    /// <returns>A task that represents the boiler in running state.</returns>
+    private async Task StartBoilerAsync(CancellationToken token)
+    {
+        try
+        {
+            _boilerMachine.SetStatus(BoilerStatus.PrePurge);
+            this._notificationService.DisplayNotification("Boiler started, entered pre-purge stage");
+            this._eventService.LogMessage(DateTime.Now, EventName.PrePurge, "Boiler entered pre-purge stage.");
+
+            await Task.Delay(10000, token);
+
+            _boilerMachine.SetStatus(BoilerStatus.Ignition);
+            this._notificationService.DisplayNotification("Boiler entered ignition stage");
+            this._eventService.LogMessage(DateTime.Now, EventName.Ignition, "Boiler entered ignition stage.");
+
+            await Task.Delay(10000, token);
+
+            _boilerMachine.SetStatus(BoilerStatus.Operational);
+            this._notificationService.DisplayNotification("Boiler entered operational state");
+            this._eventService.LogMessage(DateTime.Now, EventName.Operational, "Boiler entered operational state.");
+
+            while (true)
+            {
+                await Task.Delay(10000, token);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            this._notificationService.DisplayNotification("Boiler turned off");
+        }
+    }
+
+    internal void SimulateError()
+    {
+        if (BoilerValidation.CanSimulateError(_boilerMachine) && cancellationTokenSource != null)
+        {
+            cancellationTokenSource.Cancel();
+            this._notificationService.DisplayNotification("Simulated an error to boiler");
+            this._eventService.LogMessage(DateTime.Now, EventName.LockOut, "Simulated an error and machine entered the lock out state.");
+            _boilerMachine.SetStatus(BoilerStatus.LockOut);
+            return;
+        }
+
+        this._notificationService.DisplayNotification("Can't simulated an error when the boiler is not in operational state.");
     }
 }

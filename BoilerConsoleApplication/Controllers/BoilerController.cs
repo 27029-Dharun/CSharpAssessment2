@@ -56,6 +56,10 @@ public class BoilerController
                     this._boilerService.StopBoiler();
                     break;
 
+                case MenuOption.SimulateError:
+                    this._boilerService.SimulateError();
+                    break;
+
                 case MenuOption.ToggleInterLock:
                     this._boilerService.ToggleInterlock();
                     break;
