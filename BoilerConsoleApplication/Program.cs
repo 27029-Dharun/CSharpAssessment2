@@ -3,23 +3,25 @@ using BoilerConsoleApplication.Repository;
 using BoilerConsoleApplication.Services;
 using BoilerConsoleApplication.Views;
 
-namespace BoilerConsoleApplication
+namespace BoilerConsoleApplication;
+
+/// <summary>
+/// Contains the application root and wires up the dependencies once.
+/// </summary>
+public class Program
 {
-    internal class Program
+    private static void Main()
     {
-        static void Main()
-        {
-            ConsoleView view = new ConsoleView();
-            LogEventService logEventService = new LogEventService();
-            NotificationService notificationService = new NotificationService();
+        ConsoleView view = new ConsoleView();
+        LogEventService logEventService = new LogEventService();
+        NotificationService notificationService = new NotificationService();
 
-            LogRepository logRepository = new LogRepository("Log.txt");
-            LogService logService = new LogService(logRepository);
+        LogRepository logRepository = new LogRepository("Log.txt");
+        LogService logService = new LogService(logRepository);
 
-            BoilerService boilerService = new BoilerService(logEventService, notificationService);
-            BoilerController boilerController = new BoilerController(boilerService, logEventService, logService, notificationService, view);
+        BoilerService boilerService = new BoilerService(logEventService, notificationService);
+        BoilerController boilerController = new BoilerController(boilerService, logEventService, logService, notificationService, view);
 
-            boilerController.Run();
-        }
+        boilerController.Run();
     }
 }

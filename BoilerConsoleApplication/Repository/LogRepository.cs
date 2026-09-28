@@ -14,7 +14,7 @@ public class LogRepository
     /// Initialize the instance of <see cref="LogRepository"/>
     /// </summary>
     /// <param name="path"></param>
-    internal LogRepository(string path)
+    public LogRepository(string path)
     {
         _path = path;
         if(!File.Exists(path))
