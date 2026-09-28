@@ -22,8 +22,6 @@ public class BoilerService
     {
         _eventService = logEventService;
         _notificationService = notificationService;
-        _notificationService.DisplayNotification("Boiler Controller Initialized");
-        _eventService.LogMessage($"{DateTime.Now},{EventName.Initialize},Boiler Controller Initialized.");
     }
 
     /// <summary>
@@ -39,13 +37,13 @@ public class BoilerService
             return;
         }
 
-        if(_boilerMachine.Status == BoilerStatus.LockOut && _boilerMachine.InterLock == InterLock.Open)
+        if (_boilerMachine.Status == BoilerStatus.LockOut && _boilerMachine.InterLock == InterLock.Open)
         {
             _notificationService.DisplayNotification("Please lock the interlock & Reset lockout to start the boiler.");
             return;
         }
 
-        if(_boilerMachine.Status == BoilerStatus.LockOut)
+        if (_boilerMachine.Status == BoilerStatus.LockOut)
         {
             _notificationService.DisplayNotification("Please reset lockout to start the boiler.");
             return;
@@ -66,28 +64,32 @@ public class BoilerService
     {
         try
         {
+            _boilerMachine.SetStatus(BoilerStatus.PrePurge);
             this._notificationService.DisplayNotification("Boiler started, entered pre-purge stage");
-            this._eventService.LogMessage($"{DateTime.Now},{EventName.PrePurge},Boiler entered pre-purge stage.");
+            this._eventService.LogMessage(DateTime.Now, EventName.PrePurge, "Boiler entered pre-purge stage.");
 
             await Task.Delay(10000, token);
 
+            _boilerMachine.SetStatus(BoilerStatus.Ignition);
             this._notificationService.DisplayNotification("Boiler entered ignition stage");
-            this._eventService.LogMessage($"{DateTime.Now},{EventName.Ignition},Boiler entered ignition stage.");
+            this._eventService.LogMessage(DateTime.Now, EventName.Ignition, "Boiler entered ignition stage.");
 
             await Task.Delay(10000, token);
 
+            _boilerMachine.SetStatus(BoilerStatus.Operational);
             this._notificationService.DisplayNotification("Boiler entered operational state");
-            this._eventService.LogMessage($"{DateTime.Now},{EventName.Operational},Boiler entered operational state.");
+            this._eventService.LogMessage(DateTime.Now, EventName.Operational, "Boiler entered operational state.");
 
-            while(true)
+            while (true)
             {
                 await Task.Delay(10000, token);
             }
         }
         catch (OperationCanceledException)
         {
+            _boilerMachine.SetStatus(BoilerStatus.Ready);
             this._notificationService.DisplayNotification("Boiler turned off");
-            this._eventService.LogMessage($"{DateTime.Now},{EventName.Ready},Boiler turned off.");
+            this._eventService.LogMessage(DateTime.Now, EventName.Ready, "Boiler turned off and set to ready.");
         }
     }
 
@@ -96,7 +98,13 @@ public class BoilerService
     /// </summary>
     public void StopBoiler()
     {
+        if (cancellationTokenSource == null)
+        {
+            _notificationService.DisplayNotification($"The boiler is already in stopped");
+            return;
+        }
 
+        cancellationTokenSource.Cancel();
     }
 
     /// <summary>
@@ -106,15 +114,15 @@ public class BoilerService
     {
         if (_boilerMachine.InterLock == InterLock.Open)
         {
-            _boilerMachine.InterLock = InterLock.Closed;
+            _boilerMachine.SetInterLockStatus(InterLock.Closed);
             this._notificationService.DisplayNotification($"Toggled interlock to closed state");
-            this._eventService.LogMessage($"{DateTime.Now},{EventName.InterLockClosed},Toggled interlock to closed state.");
+            this._eventService.LogMessage(DateTime.Now,EventName.InterLockClosed,"Toggled interlock to closed state.");
         }
         else
         {
-            _boilerMachine.InterLock = InterLock.Open;
+            _boilerMachine.SetInterLockStatus(InterLock.Open);
             this._notificationService.DisplayNotification("Toggled interlock to opened state");
-            this._eventService.LogMessage($"{DateTime.Now},{EventName.InterLockOpen},Toggled interlock to open state.");
+            this._eventService.LogMessage(DateTime.Now,EventName.InterLockOpen,"Toggled interlock to open state.");
         }
     }
 
@@ -123,11 +131,11 @@ public class BoilerService
     /// </summary>
     internal void ResetLockOut()
     {
-        if(_boilerMachine.InterLock == InterLock.Closed)
+        if (_boilerMachine.InterLock == InterLock.Closed)
         {
-            _boilerMachine.Status = BoilerStatus.Ready;
+            _boilerMachine.SetStatus(BoilerStatus.Ready);
             this._notificationService.DisplayNotification("Reset machine status to ready");
-            this._eventService.LogMessage($"{DateTime.Now},{EventName.Ready},Reset machine status to ready.");
+            this._eventService.LogMessage(DateTime.Now,EventName.Ready,"Reset machine status to ready.");
         }
     }
 }

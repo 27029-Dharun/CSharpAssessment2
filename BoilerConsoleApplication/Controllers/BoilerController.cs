@@ -25,12 +25,16 @@ public class BoilerController
     /// <param name="view">View of the boiler service.</param>
     public BoilerController(BoilerService boilerService, LogEventService logEventService, LogService logService, NotificationService notificationService, ConsoleView view)
     {
-        _boilerService = boilerService;
-        _logEventService = logEventService;
-        _logService = logService;
-        _notificationService = notificationService;
-        _notificationService.Notify += view.PrintInfo;
         _view = view;
+        _boilerService = boilerService;
+        _logService = logService;
+        _logEventService = logEventService;
+        _logEventService.LogEvent += _logService.LogEvent;
+        _notificationService = notificationService;
+        _notificationService.Notify += _view.PrintInfo;
+
+        _notificationService.DisplayNotification("Boiler Controller Initialized");
+        _logEventService.LogMessage(DateTime.Now, EventName.Initialize, "Boiler Controller Initialized.");
     }
 
     /// <summary>

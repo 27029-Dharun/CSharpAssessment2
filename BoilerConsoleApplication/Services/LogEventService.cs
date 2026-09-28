@@ -1,11 +1,13 @@
-﻿namespace BoilerConsoleApplication.Services;
+﻿using BoilerConsoleApplication.Models;
+
+namespace BoilerConsoleApplication.Services;
 
 public class LogEventService
 {
-    public event Action<string>? LogEvent;
+    public event Action<DateTime,EventName,string>? LogEvent;
 
-    public void LogMessage(string log)
+    public void LogMessage(DateTime timeStamp, EventName name, string data)
     {
-        LogEvent?.Invoke(log);
+        LogEvent?.Invoke(timeStamp, name, data);
     }
 }

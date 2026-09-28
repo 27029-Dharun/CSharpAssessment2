@@ -12,8 +12,9 @@ public class LogService
         _logRepository = logRepository;
     }
 
-    internal void LogEvent(LogEntry logEntry)
+    internal void LogEvent(DateTime timeStamp, EventName name, string data)
     {
+        LogEntry logEntry = new LogEntry(timeStamp, name, data);
         _logRepository.WriteLog(logEntry);
     }
 }
