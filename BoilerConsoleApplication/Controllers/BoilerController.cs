@@ -32,7 +32,7 @@ public class BoilerController
         _logEventService = logEventService;
         _countdownEvent = countDownService;
         _countdownEvent.CountDown += this._view.PrintCountDown;
-        _logEventService.LogEvent += _logService.LogEvent;
+        _logEventService.LogEvent += this._logService.LogEvent;
         _notificationService = notificationService;
         _notificationService.Notify += _view.PrintNotification;
 
