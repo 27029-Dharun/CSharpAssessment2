@@ -12,7 +12,6 @@ public class BoilerService
     private readonly NotificationService _notificationService;
     private readonly BoilerMachine _boilerMachine = new BoilerMachine();
     private readonly CountDownService _countDownService;
-    private readonly System.Timers.Timer timer = new System.Timers.Timer(TimeSpan.FromSeconds(1));
     private CancellationTokenSource? cancellationTokenSource = null;
 
     /// <summary>
@@ -49,6 +48,12 @@ public class BoilerService
         if (_boilerMachine.Status == BoilerStatus.LockOut)
         {
             _notificationService.DisplayNotification("Please reset lockout to start the boiler.");
+            return;
+        }
+
+        if (_boilerMachine.InterLock == InterLock.Open)
+        {
+            _notificationService.DisplayNotification("Please close the interlock to start.");
             return;
         }
 

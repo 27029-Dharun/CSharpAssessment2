@@ -80,7 +80,9 @@ public class ConsoleView
         int top = Console.WindowHeight / 2;
 
         Console.SetCursorPosition(left, top);
+        Console.Write(new string(' ', left * 2));
 
+        Console.SetCursorPosition(left, top);
         Console.WriteLine($"Status: {status}");
 
         if(count == -1)

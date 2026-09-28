@@ -8,7 +8,7 @@ namespace BoilerConsoleApplication.Repository;
 public class LogRepository
 {
     private readonly string _path;
-    private object _lock = new object();
+    private readonly object _lock = new object();
 
     /// <summary>
     /// Initialize the instance of <see cref="LogRepository"/>
@@ -17,7 +17,7 @@ public class LogRepository
     public LogRepository(string path)
     {
         _path = path;
-        if(!File.Exists(path))
+        if (!File.Exists(path))
         {
             File.WriteAllText(path, "");
         }
@@ -44,13 +44,19 @@ public class LogRepository
     public List<LogEntry> ReadLog()
     {
         List<LogEntry> logInFile = new List<LogEntry>();
-        string logs = File.ReadAllText(_path);
+        string logs;
+
+        lock (_lock)
+        {
+            logs = File.ReadAllText(_path);
+        }
+
         string[] logsList = logs.Split("\n");
 
         foreach (var log in logsList)
         {
             string[] logEntries = log.Split(",");
-            if(logEntries.Length == 3)
+            if (logEntries.Length == 3)
             {
                 _ = DateTime.TryParse(logEntries[0], out DateTime dateTime);
                 _ = Enum.TryParse(logEntries[1], out EventName eventName);
