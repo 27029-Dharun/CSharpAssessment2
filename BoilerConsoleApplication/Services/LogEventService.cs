@@ -1,6 +1,6 @@
 ﻿namespace BoilerConsoleApplication.Services;
 
-internal class LogEventService
+public class LogEventService
 {
     public event Action<string>? LogEvent;
 

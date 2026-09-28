@@ -1,15 +1,32 @@
-﻿namespace BoilerConsoleApplication.Models
+﻿namespace BoilerConsoleApplication.Models;
+
+/// <summary>
+/// Contains the boiler status
+/// </summary>
+public enum BoilerStatus
 {
-    internal enum BoilerStatus
-    {
-        LockOut = 1,
+    /// <summary>
+    /// Represents the lock out state.
+    /// </summary>
+    LockOut = 1,
 
-        Ready,
+    /// <summary>
+    /// Represents the ready state.
+    /// </summary>
+    Ready,
 
-        PrePurge,
+    /// <summary>
+    /// Represents the pre-purge state.
+    /// </summary>
+    PrePurge,
 
-        Ignition,
+    /// <summary>
+    /// Represents the ignition state.
+    /// </summary>
+    Ignition,
 
-        Operational,
-    }
+    /// <summary>
+    /// Represents the operational state.
+    /// </summary>
+    Operational,
 }

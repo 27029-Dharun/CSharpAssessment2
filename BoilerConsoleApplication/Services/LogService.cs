@@ -3,7 +3,7 @@ using BoilerConsoleApplication.Repository;
 
 namespace BoilerConsoleApplication.Services;
 
-internal class LogService
+public class LogService
 {
     private readonly LogRepository _logRepository;
 

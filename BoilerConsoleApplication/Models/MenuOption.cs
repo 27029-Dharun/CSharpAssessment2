@@ -3,7 +3,7 @@
 /// <summary>
 /// Contains all the menu operations that are all available.
 /// </summary>
-internal enum MenuOption
+public enum MenuOption
 {
     /// <summary>
     /// Represents an option to start the boiler.

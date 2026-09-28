@@ -1,15 +1,14 @@
-﻿namespace BoilerConsoleApplication.Models
+﻿namespace BoilerConsoleApplication.Models;
+
+public class BoilerMachine
 {
-    internal class BoilerMachine
+    public BoilerMachine()
     {
-        public BoilerMachine()
-        {
-            Status = BoilerStatus.LockOut;
-            InterLock = InterLock.Open;
-        }
-
-        public BoilerStatus Status { get; set; }
-
-        public InterLock InterLock { get; set; }
+        Status = BoilerStatus.LockOut;
+        InterLock = InterLock.Open;
     }
+
+    public BoilerStatus Status { get; set; }
+
+    public InterLock InterLock { get; set; }
 }

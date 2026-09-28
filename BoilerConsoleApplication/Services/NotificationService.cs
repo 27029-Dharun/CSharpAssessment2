@@ -1,6 +1,6 @@
 ﻿namespace BoilerConsoleApplication.Services;
 
-internal class NotificationService
+public class NotificationService
 {
     public event Action<string>? Notify;
 
