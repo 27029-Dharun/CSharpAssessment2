@@ -1,5 +1,4 @@
-﻿
-using BoilerConsoleApplication.Models;
+﻿using BoilerConsoleApplication.Models;
 using BoilerConsoleApplication.Validators;
 
 namespace BoilerConsoleApplication.Services;
@@ -83,11 +82,22 @@ public class BoilerService
             this._notificationService.DisplayNotification($"Toggled interlock to closed state");
             this._eventService.LogMessage(DateTime.Now,EventName.InterLockClosed,"Toggled interlock to closed state.");
         }
+        else if(_boilerMachine.InterLock == InterLock.Closed && BoilerValidation.IsMachineRunning(_boilerMachine) && cancellationTokenSource != null)
+        {
+            _boilerMachine.SetInterLockStatus(InterLock.Open);
+            this._notificationService.DisplayNotification("Toggled interlock to opened state");
+            this._eventService.LogMessage(DateTime.Now, EventName.InterLockOpen, "Toggled interlock to open state.");
+
+            cancellationTokenSource.Cancel();
+            this._notificationService.DisplayNotification("Boiler stopped since the interlock is opened.");
+            this._eventService.LogMessage(DateTime.Now, EventName.LockOut, "Boiler stopped since the interlock is opened and entered the lock out state.");
+            _boilerMachine.SetStatus(BoilerStatus.LockOut);
+        }
         else
         {
             _boilerMachine.SetInterLockStatus(InterLock.Open);
             this._notificationService.DisplayNotification("Toggled interlock to opened state");
-            this._eventService.LogMessage(DateTime.Now,EventName.InterLockOpen,"Toggled interlock to open state.");
+            this._eventService.LogMessage(DateTime.Now, EventName.InterLockOpen, "Toggled interlock to open state.");
         }
     }
 
@@ -102,6 +112,23 @@ public class BoilerService
             this._notificationService.DisplayNotification("Reset machine status to ready");
             this._eventService.LogMessage(DateTime.Now,EventName.Ready,"Reset machine status to ready.");
         }
+    }
+
+    /// <summary>
+    /// Simulates the error when the boiler is in operational state.
+    /// </summary>
+    public void SimulateError()
+    {
+        if (BoilerValidation.CanSimulateError(_boilerMachine) && cancellationTokenSource != null)
+        {
+            cancellationTokenSource.Cancel();
+            this._notificationService.DisplayNotification("Simulated an error to boiler");
+            this._eventService.LogMessage(DateTime.Now, EventName.LockOut, "Simulated an error and machine entered the lock out state.");
+            _boilerMachine.SetStatus(BoilerStatus.LockOut);
+            return;
+        }
+
+        this._notificationService.DisplayNotification("Can't simulated an error when the boiler is not in operational state.");
     }
 
     /// <summary>
@@ -138,19 +165,5 @@ public class BoilerService
         {
             this._notificationService.DisplayNotification("Boiler turned off");
         }
-    }
-
-    internal void SimulateError()
-    {
-        if (BoilerValidation.CanSimulateError(_boilerMachine) && cancellationTokenSource != null)
-        {
-            cancellationTokenSource.Cancel();
-            this._notificationService.DisplayNotification("Simulated an error to boiler");
-            this._eventService.LogMessage(DateTime.Now, EventName.LockOut, "Simulated an error and machine entered the lock out state.");
-            _boilerMachine.SetStatus(BoilerStatus.LockOut);
-            return;
-        }
-
-        this._notificationService.DisplayNotification("Can't simulated an error when the boiler is not in operational state.");
     }
 }

@@ -17,4 +17,9 @@ public class LogService
         LogEntry logEntry = new LogEntry(timeStamp, name, data);
         _logRepository.WriteLog(logEntry);
     }
+
+    public List<LogEntry> GetLog()
+    {
+        return this._logRepository.ReadLog();
+    }
 }

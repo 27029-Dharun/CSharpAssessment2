@@ -68,9 +68,19 @@ public class BoilerController
                     this._boilerService.ResetLockOut();
                     break;
 
+                case MenuOption.ViewLog:
+                    this.DisplayLog();
+                    break;
+
                 case MenuOption.Exit:
                     return;
             }
         }
+    }
+
+    private void DisplayLog()
+    {
+        List<LogEntry> logEntries = this._logService.GetLog();
+        this._view.PrintLog(logEntries);
     }
 }

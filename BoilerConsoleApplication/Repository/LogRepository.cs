@@ -32,7 +32,7 @@ public class LogRepository
     {
         lock (_lock)
         {
-            string message = $"{logEntry.TimeStamp},{logEntry.Name},{logEntry.Data}\n";
+            string message = $"{logEntry.TimeStamp:dd-MM-yyyy HH:mm:ff},{logEntry.Name},{logEntry.Data}\n";
             File.AppendAllText(_path, message);
         }
     }
@@ -50,10 +50,13 @@ public class LogRepository
         foreach (var log in logsList)
         {
             string[] logEntries = log.Split(",");
-            DateTime date = DateTime.Parse(logEntries[0]);
-            _ = Enum.TryParse(logEntries[1], out EventName eventName);
-            LogEntry entry = new LogEntry(date, eventName, logEntries[2]);
-            logInFile.Add(entry);
+            if(logEntries.Length == 3)
+            {
+                _ = DateTime.TryParse(logEntries[0], out DateTime dateTime);
+                _ = Enum.TryParse(logEntries[1], out EventName eventName);
+                LogEntry entry = new LogEntry(dateTime, eventName, logEntries[2]);
+                logInFile.Add(entry);
+            }
         }
 
         return logInFile;
