@@ -39,7 +39,7 @@ public class BoilerService
 
         if (_boilerMachine.Status == BoilerStatus.LockOut && _boilerMachine.InterLock == InterLock.Open)
         {
-            _notificationService.DisplayNotification("Please lock the interlock & Reset lockout to start the boiler.");
+            _notificationService.DisplayNotification("Please lock the interlock & Reset lockout to start.");
             return;
         }
 

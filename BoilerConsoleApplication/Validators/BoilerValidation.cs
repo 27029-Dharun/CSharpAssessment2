@@ -22,7 +22,8 @@ public static class BoilerValidation
         return true;
     }
 
-    internal static bool CanSimulateError(BoilerMachine boilerMachine)
+    
+    public static bool CanSimulateError(BoilerMachine boilerMachine)
     {
         return boilerMachine.Status == BoilerStatus.Operational;
     }

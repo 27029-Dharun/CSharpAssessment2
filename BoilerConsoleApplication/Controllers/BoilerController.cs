@@ -31,7 +31,7 @@ public class BoilerController
         _logEventService = logEventService;
         _logEventService.LogEvent += _logService.LogEvent;
         _notificationService = notificationService;
-        _notificationService.Notify += _view.PrintInfo;
+        _notificationService.Notify += _view.PrintNotification;
 
         _notificationService.DisplayNotification("Boiler Controller Initialized");
         _logEventService.LogMessage(DateTime.Now, EventName.Initialize, "Boiler Controller Initialized.");

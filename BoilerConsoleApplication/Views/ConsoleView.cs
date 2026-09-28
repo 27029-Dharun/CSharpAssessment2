@@ -4,14 +4,7 @@ namespace BoilerConsoleApplication.Views;
 
 public class ConsoleView
 {
-    /// <summary>
-    /// Prints the string.
-    /// </summary>
-    /// <param name="message">The string to be printed.</param>
-    public void PrintInfo(string message)
-    {
-        Console.WriteLine(message);
-    }
+    private int currentNotificationLine = 0;
 
     /// <summary>
     /// Gets the main menu option from the user.
@@ -19,7 +12,7 @@ public class ConsoleView
     /// <returns>The menu option entered by the user.</returns>
     public MenuOption GetMainMenuOption()
     {
-        string menuMessage = "  Boiler Controller\n" +
+        string menuMessage = "  Boiler Controller - Menu Option \n" +
             "1. Start boiler operation\n" +
             "2. Stop boiler operation\n" +
             "3. Simulate error\n" +
@@ -31,35 +24,51 @@ public class ConsoleView
         return this.GetEnumValue<MenuOption>(menuMessage);
     }
 
-    /// <summary>
-    /// Displays the enum value and gets input from the user.
-    /// </summary>
-    /// <typeparam name="T">Type variable struct.</typeparam>
-    /// <param name="message">String to be printed.</param>
-    /// <returns>Returns a enum value entered by user.</returns>
-    public T GetEnumValue<T>(string message)
-       where T : struct, Enum
+    public void PrintLog(List<LogEntry> logEntries)
     {
-        while (true)
+        Console.WriteLine("=====================================================================================");
+        Console.WriteLine("|         Date        |        EventName         |                    Data           |");
+        Console.WriteLine("=====================================================================================");
+        foreach (var entries in logEntries)
         {
-            string input = this.GetString(message);
-            if (Enum.TryParse(input, out T result) && Enum.IsDefined(result))
-            {
-                return result;
-            }
-
-            Console.Clear();
-            Console.WriteLine("Enter a valid option");
+            Console.WriteLine($"| {entries.TimeStamp} | {entries.Name} | {entries.Data} |");
         }
+        Console.WriteLine("=====================================================================================");
     }
 
     /// <summary>
-    /// Clears the console messages.
+    /// Prints the notifications in the right side of the console window.
     /// </summary>
-    public void ClearConsole()
+    /// <param name="message"></param>
+    public void PrintNotification(string message)
     {
-        Console.Write("\x1b[3J");
-        Console.Clear();
+        (int currentLeft, int currentTop) = Console.GetCursorPosition();
+
+        int startPosition = Console.WindowWidth - (Console.WindowWidth / 3);
+
+        Console.SetCursorPosition(startPosition, currentNotificationLine++);
+        Console.WriteLine(message);
+
+        if(currentNotificationLine >= Console.WindowHeight)
+        {
+            ClearConsole();
+        }
+
+        Console.SetCursorPosition(currentLeft, currentTop);
+    }
+
+    private void ClearLeftSide()
+    {
+        int endPosition = Console.WindowWidth - (Console.WindowWidth / 3);
+        Console.SetCursorPosition(0, 0);
+
+        for(int i = 0; i< Console.WindowHeight; i++)
+        {
+            Console.SetCursorPosition(0, i);
+            Console.Write(new String(' ', endPosition));
+        }
+
+        Console.SetCursorPosition(0, 0);
     }
 
     /// <summary>
@@ -75,12 +84,36 @@ public class ConsoleView
         return input;
     }
 
-    internal void PrintLog(List<LogEntry> logEntries)
+    /// <summary>
+    /// Displays the enum value and gets input from the user.
+    /// </summary>
+    /// <typeparam name="T">Type variable struct.</typeparam>
+    /// <param name="message">String to be printed.</param>
+    /// <returns>Returns a enum value entered by user.</returns>
+    private T GetEnumValue<T>(string message)
+       where T : struct, Enum
     {
-        Console.WriteLine("          Date        |        EventName    |                       Data           ");
-        foreach (var entries in logEntries)
+        while (true)
         {
-            Console.WriteLine($"{entries.TimeStamp}, {entries.Name}, {entries.Data}");
+            string input = this.GetString(message);
+
+            ClearLeftSide();
+
+            if (Enum.TryParse(input, out T result) && Enum.IsDefined(result))
+            {
+                return result;
+            }
+
+            Console.WriteLine("Enter a valid option");
         }
+    }
+
+    /// <summary>
+    /// Clears the console messages.
+    /// </summary>
+    private void ClearConsole()
+    {
+        Console.Write("\x1b[3J");
+        Console.Clear();
     }
 }
