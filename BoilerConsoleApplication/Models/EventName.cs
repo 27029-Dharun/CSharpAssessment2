@@ -6,37 +6,42 @@
 public enum EventName
 {
     /// <summary>
-    /// Represents the event when the machine is initialized.
+    /// Represents the event when the boiler is initialized.
     /// </summary>
     Initialize = 1,
 
     /// <summary>
-    /// Represents the event when the machine's interlock is in open state.
+    /// Represents the event when the boiler's interlock is in open state.
     /// </summary>
-    InterLockClosed = 2,
+    InterLockClosed,
 
     /// <summary>
-    /// Represents the event when the machine's interlock is in closed state.
+    /// Represents the event when the boiler's interlock is in closed state.
     /// </summary>
     InterLockOpen,
 
     /// <summary>
-    /// Represents the event when the machine is in ready state.
+    /// Represents the event when the boiler is in ready state.
     /// </summary>
     Ready,
 
     /// <summary>
-    /// Represents the event when the machine is pre-purge state.
+    /// Represents the event when the boiler is pre-purge state.
     /// </summary>
     PrePurge,
 
     /// <summary>
-    /// Represents the event when the machine is in ignition state.
+    /// Represents the event when the boiler is in ignition state.
     /// </summary>
     Ignition,
 
     /// <summary>
-    /// Represents the event when the machine is in operational state.
+    /// Represents the event when the boiler is in operational state.
     /// </summary>
     Operational,
+
+    /// <summary>
+    /// Represents the events when the boiler enters the lockout state.
+    /// </summary>
+    LockOut,
 }

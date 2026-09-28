@@ -56,6 +56,10 @@ public class BoilerController
                     this._boilerService.StopBoiler();
                     break;
 
+                case MenuOption.SimulateError:
+                    this._boilerService.SimulateError();
+                    break;
+
                 case MenuOption.ToggleInterLock:
                     this._boilerService.ToggleInterlock();
                     break;
@@ -64,9 +68,22 @@ public class BoilerController
                     this._boilerService.ResetLockOut();
                     break;
 
+                case MenuOption.ViewLog:
+                    this.DisplayLog();
+                    break;
+
                 case MenuOption.Exit:
                     return;
             }
         }
+    }
+
+    /// <summary>
+    /// Displays the log representing the events in the boiler.
+    /// </summary>
+    private void DisplayLog()
+    {
+        List<LogEntry> logEntries = this._logService.GetLog();
+        this._view.PrintLog(logEntries);
     }
 }

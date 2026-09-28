@@ -74,4 +74,13 @@ public class ConsoleView
 
         return input;
     }
+
+    internal void PrintLog(List<LogEntry> logEntries)
+    {
+        Console.WriteLine("          Date        |        EventName    |                       Data           ");
+        foreach (var entries in logEntries)
+        {
+            Console.WriteLine($"{entries.TimeStamp}, {entries.Name}, {entries.Data}");
+        }
+    }
 }
