@@ -82,6 +82,14 @@ public class ConsoleView
         Console.SetCursorPosition(left, top);
 
         Console.WriteLine($"Status: {status}");
+
+        if(count == -1)
+        {
+            Console.Write(new string(' ', left*2));
+            Console.SetCursorPosition(currentLeft, currentTop);
+            return;
+        }
+
         Console.Write(new string(' ', left));
         Console.WriteLine($"{count}   ");
 

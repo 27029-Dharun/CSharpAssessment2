@@ -14,6 +14,8 @@ public class CountDownService
 
             await Task.Delay(1000, token);
         }
+
+        DisplayCountDown(-1, BoilerStatus.Operational);
     }
 
     private void DisplayCountDown(int timer, BoilerStatus status)
