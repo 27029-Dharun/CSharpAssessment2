@@ -74,6 +74,7 @@ public class BoilerService
         cancellationTokenSource.Cancel();
         _boilerMachine.SetStatus(BoilerStatus.Ready);
         this._eventService.LogMessage(DateTime.Now, EventName.Ready, "Boiler turned off and set to ready.");
+        _notificationService.DisplayNotification($"The boiler is turned off and set to ready.");
     }
 
     /// <summary>
