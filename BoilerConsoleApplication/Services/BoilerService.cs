@@ -117,13 +117,19 @@ public class BoilerService
     /// </summary>
     public void ResetLockOut()
     {
+        if(BoilerValidation.IsMachineRunning(_boilerMachine))
+        {
+            this._notificationService.DisplayNotification("Machine already in running status");
+            return;
+        }
+
         if(_boilerMachine.Status == BoilerStatus.Ready)
         {
             this._notificationService.DisplayNotification("Machine already in ready status");
             return;
         }
 
-        if (_boilerMachine.InterLock == InterLock.Closed && !BoilerValidation.IsMachineRunning(_boilerMachine))
+        if (_boilerMachine.InterLock == InterLock.Closed)
         {
             _boilerMachine.SetStatus(BoilerStatus.Ready);
 
@@ -133,7 +139,7 @@ public class BoilerService
             return;
         }
 
-        this._notificationService.DisplayNotification("Toggle interlock switch to reset lockout and stop the machine.");
+        this._notificationService.DisplayNotification("Toggle interlock switch to reset lockout.");
     }
 
     /// <summary>
@@ -171,19 +177,19 @@ public class BoilerService
 
             Task timer = this._countDownService.DisplayTimer(10, BoilerStatus.PrePurge, token);
             Task delay = Task.Delay(10000, token);
-
             await Task.WhenAll(timer, delay);
 
             _boilerMachine.SetStatus(BoilerStatus.Ignition);
+
             this._notificationService.DisplayNotification("Boiler entered ignition stage");
             this._eventService.LogMessage(DateTime.Now, EventName.Ignition, "Boiler entered ignition stage.");
 
             timer = this._countDownService.DisplayTimer(10, BoilerStatus.Ignition, token);
             delay = Task.Delay(10000, token);
-
             await Task.WhenAll(timer, delay);
 
             _boilerMachine.SetStatus(BoilerStatus.Operational);
+
             this._notificationService.DisplayNotification("Boiler entered operational state");
             this._eventService.LogMessage(DateTime.Now, EventName.Operational, "Boiler entered operational state.");
 
