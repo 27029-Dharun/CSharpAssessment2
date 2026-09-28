@@ -1,5 +1,6 @@
 ﻿
 using BoilerConsoleApplication.Models;
+using BoilerConsoleApplication.Validators;
 
 namespace BoilerConsoleApplication.Services;
 
@@ -27,11 +28,11 @@ public class BoilerService
     /// <summary>
     /// Starts the boiler.
     /// </summary>
-    internal void StartBoiler()
+    public void StartBoiler()
     {
         cancellationTokenSource = new CancellationTokenSource();
 
-        if (_boilerMachine.Status != BoilerStatus.LockOut && _boilerMachine.Status != BoilerStatus.Ready)
+        if (BoilerValidation.IsMachineRunning(_boilerMachine))
         {
             _notificationService.DisplayNotification("Machine is running already");
             return;
@@ -98,9 +99,9 @@ public class BoilerService
     /// </summary>
     public void StopBoiler()
     {
-        if (cancellationTokenSource == null)
+        if (cancellationTokenSource == null || !BoilerValidation.IsMachineRunning(_boilerMachine))
         {
-            _notificationService.DisplayNotification($"The boiler is already in stopped");
+            _notificationService.DisplayNotification($"The boiler is already in stopped stage");
             return;
         }
 
@@ -110,7 +111,7 @@ public class BoilerService
     /// <summary>
     /// Toggle the interlock switch.
     /// </summary>
-    internal void ToggleInterlock()
+    public void ToggleInterlock()
     {
         if (_boilerMachine.InterLock == InterLock.Open)
         {
@@ -129,7 +130,7 @@ public class BoilerService
     /// <summary>
     /// Reset the boiler's lockout.
     /// </summary>
-    internal void ResetLockOut()
+    public void ResetLockOut()
     {
         if (_boilerMachine.InterLock == InterLock.Closed)
         {
