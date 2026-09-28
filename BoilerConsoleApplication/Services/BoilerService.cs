@@ -123,7 +123,7 @@ public class BoilerService
             return;
         }
 
-        if (_boilerMachine.InterLock == InterLock.Closed)
+        if (_boilerMachine.InterLock == InterLock.Closed && !BoilerValidation.IsMachineRunning(_boilerMachine))
         {
             _boilerMachine.SetStatus(BoilerStatus.Ready);
 
@@ -133,7 +133,7 @@ public class BoilerService
             return;
         }
 
-        this._notificationService.DisplayNotification("Toggle interlock switch to reset lockout.");
+        this._notificationService.DisplayNotification("Toggle interlock switch to reset lockout and stop the machine.");
     }
 
     /// <summary>
