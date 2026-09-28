@@ -15,12 +15,13 @@ public class Program
         ConsoleView view = new ConsoleView();
         LogEventService logEventService = new LogEventService();
         NotificationService notificationService = new NotificationService();
+        CountDownService countDownService = new CountDownService();
 
         LogRepository logRepository = new LogRepository("Log.txt");
         LogService logService = new LogService(logRepository);
 
-        BoilerService boilerService = new BoilerService(logEventService, notificationService);
-        BoilerController boilerController = new BoilerController(boilerService, logEventService, logService, notificationService, view);
+        BoilerService boilerService = new BoilerService(logEventService, notificationService, countDownService);
+        BoilerController boilerController = new BoilerController(boilerService, logEventService, logService, notificationService, countDownService, view);
 
         boilerController.Run();
     }

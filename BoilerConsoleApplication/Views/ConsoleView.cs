@@ -7,6 +7,15 @@ public class ConsoleView
     private int currentNotificationLine = 0;
 
     /// <summary>
+    /// Prints the message in the console.
+    /// </summary>
+    /// <param name="message"></param>
+    public void PrintInfo(string message)
+    {
+        Console.WriteLine(message);
+    }
+
+    /// <summary>
     /// Gets the main menu option from the user.
     /// </summary>
     /// <returns>The menu option entered by the user.</returns>
@@ -27,11 +36,11 @@ public class ConsoleView
     public void PrintLog(List<LogEntry> logEntries)
     {
         Console.WriteLine("=====================================================================================");
-        Console.WriteLine("|         Date        |        EventName         |                    Data           |");
+        Console.WriteLine("|         Date        |     EventName   |                    Data                   |");
         Console.WriteLine("=====================================================================================");
         foreach (var entries in logEntries)
         {
-            Console.WriteLine($"| {entries.TimeStamp} | {entries.Name} | {entries.Data} |");
+            Console.WriteLine($"| {entries.TimeStamp} | {entries.Name, -15} | {entries.Data, -40} |");
         }
         Console.WriteLine("=====================================================================================");
     }
@@ -52,9 +61,42 @@ public class ConsoleView
         if(currentNotificationLine >= Console.WindowHeight)
         {
             ClearConsole();
+            currentNotificationLine = 0;
         }
 
         Console.SetCursorPosition(currentLeft, currentTop);
+    }
+
+    /// <summary>
+    /// Prints the countdown
+    /// </summary>
+    /// <param name="count"></param>
+    /// <param name="status"></param>
+    public void PrintCountDown(int count, BoilerStatus status)
+    {
+        (int currentLeft, int currentTop) = Console.GetCursorPosition();
+
+        int left = Console.WindowWidth / 5;
+        int top = Console.WindowHeight / 2;
+
+        Console.SetCursorPosition(left, top);
+
+        Console.WriteLine($"Status: {status}");
+        Console.Write(new string(' ', left));
+        Console.WriteLine($"{count}   ");
+
+        Console.SetCursorPosition (currentLeft, currentTop);
+    }
+
+    /// <summary>
+    /// Reads a key and clears the console.
+    /// </summary>
+    public void PauseAndClear()
+    {
+        Console.WriteLine("Enter any key to cleat the console");
+        Console.ReadKey();
+
+        ClearConsole();
     }
 
     private void ClearLeftSide()

@@ -12,6 +12,7 @@ public class BoilerController
     private readonly BoilerService _boilerService;
     private readonly LogEventService _logEventService;
     private readonly NotificationService _notificationService;
+    private readonly CountDownService _countdownEvent;
     private readonly LogService _logService;
     private readonly ConsoleView _view;
 
@@ -23,12 +24,14 @@ public class BoilerController
     /// <param name="logService">Instance of the log service</param>
     /// <param name="notificationService">Instance of the notification service</param>
     /// <param name="view">View of the boiler service.</param>
-    public BoilerController(BoilerService boilerService, LogEventService logEventService, LogService logService, NotificationService notificationService, ConsoleView view)
+    public BoilerController(BoilerService boilerService, LogEventService logEventService, LogService logService, NotificationService notificationService, CountDownService countDownService, ConsoleView view)
     {
         _view = view;
         _boilerService = boilerService;
         _logService = logService;
         _logEventService = logEventService;
+        _countdownEvent = countDownService;
+        _countdownEvent.CountDown += this._view.PrintCountDown;
         _logEventService.LogEvent += _logService.LogEvent;
         _notificationService = notificationService;
         _notificationService.Notify += _view.PrintNotification;
@@ -44,36 +47,43 @@ public class BoilerController
     {
         while (true)
         {
-            MenuOption option = this._view.GetMainMenuOption();
-
-            switch (option)
+            try
             {
-                case MenuOption.StartBoiler:
-                    this._boilerService.StartBoiler();
-                    break;
+                MenuOption option = this._view.GetMainMenuOption();
 
-                case MenuOption.StopBoiler:
-                    this._boilerService.StopBoiler();
-                    break;
+                switch (option)
+                {
+                    case MenuOption.StartBoiler:
+                        this._boilerService.StartBoiler();
+                        break;
 
-                case MenuOption.SimulateError:
-                    this._boilerService.SimulateError();
-                    break;
+                    case MenuOption.StopBoiler:
+                        this._boilerService.StopBoiler();
+                        break;
 
-                case MenuOption.ToggleInterLock:
-                    this._boilerService.ToggleInterlock();
-                    break;
+                    case MenuOption.SimulateError:
+                        this._boilerService.SimulateError();
+                        break;
 
-                case MenuOption.ResetLockOut:
-                    this._boilerService.ResetLockOut();
-                    break;
+                    case MenuOption.ToggleInterLock:
+                        this._boilerService.ToggleInterlock();
+                        break;
 
-                case MenuOption.ViewLog:
-                    this.DisplayLog();
-                    break;
+                    case MenuOption.ResetLockOut:
+                        this._boilerService.ResetLockOut();
+                        break;
 
-                case MenuOption.Exit:
-                    return;
+                    case MenuOption.ViewLog:
+                        this.DisplayLog();
+                        break;
+
+                    case MenuOption.Exit:
+                        return;
+                }
+            }
+            catch(Exception ex)
+            {
+                _view.PrintInfo(ex.Message);
             }
         }
     }
@@ -85,5 +95,7 @@ public class BoilerController
     {
         List<LogEntry> logEntries = this._logService.GetLog();
         this._view.PrintLog(logEntries);
+
+        this._view.PauseAndClear();
     }
 }
